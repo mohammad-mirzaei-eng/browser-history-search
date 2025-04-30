@@ -1,0 +1,31 @@
+{
+    "manifest_version": 2,
+    "name": "Browser History Search",
+    "description": "Advanced browser history search with filtering and statistics features",
+    "version": "1.0",
+    "author": "Mohammad Mirzaei",
+    "homepage_url": "https://github.com/mohammad-mirzaei-eng/browser-history-search",
+    "permissions": ["history", "storage"],
+    "browser_action": {
+      "default_popup": "popup.html",
+      "default_icon": {
+        "16": "icons/icon16.png",
+        "32": "icons/icon32.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+      }
+    },
+    "icons": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "applications": {
+      "gecko": {
+        "id": "mthreat.mob@gmail.com",
+        "strict_min_version": "57.0"
+      }
+    }
+}
+  
