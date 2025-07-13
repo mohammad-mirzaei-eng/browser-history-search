@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Browser History Search",
     "description": "Browser History Search is a powerful tool that transforms how you interact with your browsing history. Search through your entire browsing history with advanced filters, view detailed statistics about your browsing patterns, and analyze your web usage with beautiful charts. Features include:\n\n• Advanced search with multiple filters\n• Real-time search results\n• Detailed browsing statistics\n• Visual charts of your browsing patterns\n• Export search results\n• Dark/Light theme support\n• Keyboard shortcuts\n\nPerfect for researchers, students, and anyone who needs to efficiently manage their browsing history.",
-    "version": "1.0",
+    "version": "1.1",
     "author": "Mohammad Mirzaei",
     "homepage_url": "https://github.com/mohammad-mirzaei-eng/browser-history-search",
     "permissions": ["history", "storage"],
