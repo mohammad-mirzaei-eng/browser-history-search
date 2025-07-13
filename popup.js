@@ -332,6 +332,12 @@ function displayResults() {
   });
 
   resultsDiv.appendChild(fragment);
+
+  // --- این بخش را اضافه کنید ---
+  // به همه لینک‌های نتایج تول‌تیپ آدرس بده
+  resultsDiv.querySelectorAll('a[href]').forEach(link => {
+    link.title = link.href;
+  });
 }
 
 // Display statistics
@@ -429,4 +435,3 @@ function downloadFile(filename, content, mimeType) {
 
   URL.revokeObjectURL(url);
 }
-  
