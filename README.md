@@ -10,6 +10,7 @@ A powerful browser extension for advanced history search with comprehensive feat
 - 🌐 Domain-specific filtering
 - 📅 Date range filtering
 - 🔢 Minimum visit count filter
+- 🔢 Maximum results per search (user configurable)
 
 ### Results Management
 - 📊 Real-time statistics and charts
@@ -25,6 +26,7 @@ A powerful browser extension for advanced history search with comprehensive feat
 - 🔄 Auto-save search filters
 - 📱 Responsive design
 - 🎨 Modern and clean interface
+- 🌀 Progress overlay during heavy operations (search, delete, export)
 
 ### Advanced Features
 - 🔍 Bulk selection with Shift+Click
@@ -108,6 +110,7 @@ This project is licensed under the MIT License.
 - 🌐 فیلتر کردن بر اساس دامنه
 - 📅 فیلتر کردن بر اساس محدوده زمانی
 - 🔢 فیلتر بر اساس حداقل تعداد بازدید
+- 🔢 تعیین حداکثر نتایج جستجو توسط کاربر
 
 ### مدیریت نتایج
 - 📊 آمار و نمودارهای زنده
@@ -123,6 +126,7 @@ This project is licensed under the MIT License.
 - 🔄 ذخیره خودکار فیلترهای جستجو
 - 📱 طراحی واکنش‌گرا
 - 🎨 رابط کاربری مدرن و تمیز
+- 🌀 نمایش پرده و پروگرس بار هنگام عملیات سنگین (جستجو، حذف، خروجی)
 
 ### امکانات پیشرفته
 - 🔍 انتخاب گروهی با Shift+Click
@@ -190,4 +194,4 @@ This project is licensed under the MIT License.
 
 ## مجوز
 
-این پروژه تحت مجوز MIT منتشر شده است. 
+این پروژه تحت مجوز MIT منتشر شده است.
