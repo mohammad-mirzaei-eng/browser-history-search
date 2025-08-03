@@ -2,6 +2,12 @@
 
 A powerful browser extension for advanced history search with comprehensive features.
 
+## Demo
+
+*(placeholder for a GIF or screenshot of the new UI)*
+
+The new user interface is designed to be modern, user-friendly, and fully responsive. It adapts gracefully to any screen size, from a small mobile phone to a large desktop monitor, ensuring a seamless experience on any device. The design features a clean aesthetic, an improved dark mode, and enhanced accessibility.
+
 ## Features
 
 ### Search & Filtering
@@ -99,6 +105,12 @@ This project is licensed under the MIT License.
 # جستجوی تاریخچه مرورگر
 
 یک افزونه قدرتمند مرورگر برای جستجوی پیشرفته در تاریخچه با امکانات جامع.
+
+## دمو
+
+*(جای خالی برای گیف یا اسکرین‌شات از رابط کاربری جدید)*
+
+رابط کاربری جدید به گونه‌ای طراحی شده است که مدرن، کاربرپسند و کاملاً واکنش‌گرا باشد. این طرح به زیبایی با هر اندازه صفحه‌نمایش، از یک تلفن همراه کوچک تا یک مانیتور دسکتاپ بزرگ، سازگار می‌شود و تجربه‌ای یکپارچه را در هر دستگاهی تضمین می‌کند. این طراحی دارای زیبایی‌شناسی تمیز، حالت تاریک بهبود یافته و دسترسی‌پذیری پیشرفته است.
 
 ## ویژگی‌ها
 
