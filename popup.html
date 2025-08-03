@@ -5,18 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Browser History Search</title>
   <link rel="stylesheet" href="styles.css">
-  <style>
-    body {
-      width: 600px;
-      min-width: 400px;
-      max-width: 800px;
-      height: 600px;
-      min-height: 400px;
-      max-height: 800px;
-      resize: both;
-      overflow: auto;
-    }
-  </style>
 </head>
 <body>
   <div class="container">
@@ -54,24 +42,26 @@
         </select>
       </div>
 
-      <div class="input-group">
-        <label for="domain">دامنه:</label>
-        <input type="text" id="domain" placeholder="مثال: google.com">
-      </div>
+      <div class="filter-group">
+        <div class="input-group">
+          <label for="domain">دامنه:</label>
+          <input type="text" id="domain" placeholder="مثال: google.com">
+        </div>
 
-      <div class="input-group">
-        <label for="startTime">از تاریخ:</label>
-        <input type="datetime-local" id="startTime">
-      </div>
+        <div class="input-group">
+          <label for="startTime">از تاریخ:</label>
+          <input type="datetime-local" id="startTime">
+        </div>
 
-      <div class="input-group">
-        <label for="endTime">تا تاریخ:</label>
-        <input type="datetime-local" id="endTime">
-      </div>
+        <div class="input-group">
+          <label for="endTime">تا تاریخ:</label>
+          <input type="datetime-local" id="endTime">
+        </div>
 
-      <div class="input-group">
-        <label for="minVisits">حداقل تعداد بازدید:</label>
-        <input type="number" id="minVisits" min="0">
+        <div class="input-group">
+          <label for="minVisits">حداقل تعداد بازدید:</label>
+          <input type="number" id="minVisits" min="0">
+        </div>
       </div>
     </div>
 
@@ -86,9 +76,12 @@
       <button id="deleteAllBtn">حذف همه موارد</button>
     </div>
 
-    <div id="stats" class="stats-section"></div>
+    <div id="stats" class="stats-section" role="region" aria-labelledby="stats-heading">
+        <h3 id="stats-heading" class="visually-hidden">Statistics</h3>
+    </div>
 
-    <div id="chartContainer" class="chart-container">
+    <div id="chartContainer" class="chart-container" role="region" aria-labelledby="chart-heading">
+        <h3 id="chart-heading" class="visually-hidden">Chart</h3>
       <div class="chart">
         <div class="chart-bars">
           <div class="chart-bar" id="resultsBar">
@@ -101,7 +94,9 @@
       </div>
     </div>
 
-    <div id="results" class="results-section"></div>
+    <div id="results" class="results-section" role="region" aria-labelledby="results-heading">
+        <h3 id="results-heading" class="visually-hidden">Results</h3>
+    </div>
   </div>
   <script src="browser-polyfill.js"></script>
   <script type="module" src="main.js"></script>
