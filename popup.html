@@ -7,96 +7,72 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <h2>جستجوی تاریخچه مرورگر</h2>
-    
-    <div class="settings-section">
-      <div class="language-switch">
-        <label>
-          <input type="radio" name="language" value="fa" checked> فارسی
-        </label>
-        <label>
-          <input type="radio" name="language" value="en"> English
-        </label>
-      </div>
-
-      <div class="dark-mode-toggle">
-        <label>
-          <input type="checkbox" id="darkModeToggle">
-          حالت تاریک
-        </label>
-      </div>
-    </div>
-
-    <div class="filter-section">
-      <div class="input-group">
-        <label for="keyword">کلیدواژه:</label>
-        <input type="text" id="keyword" placeholder="جستجو...">
-      </div>
-
-      <div class="input-group">
-        <label for="matchType">نوع جستجو:</label>
-        <select id="matchType">
-          <option value="contains">شامل</option>
-          <option value="exact">دقیق</option>
-        </select>
-      </div>
-
-      <div class="filter-group">
-        <div class="input-group">
-          <label for="domain">دامنه:</label>
-          <input type="text" id="domain" placeholder="مثال: google.com">
+  <div class="app-container">
+    <header class="app-header">
+      <h2>History Search</h2>
+      <div class="settings-section">
+        <div class="language-switch">
+          <label><input type="radio" name="language" value="fa" checked> فارسی</label>
+          <label><input type="radio" name="language" value="en"> English</label>
         </div>
+        <div class="dark-mode-toggle">
+          <label><input type="checkbox" id="darkModeToggle"> Dark Mode</label>
+        </div>
+      </div>
+    </header>
 
+    <aside class="sidebar">
+      <h3>Filters</h3>
+      <div class="filter-section">
         <div class="input-group">
-          <label for="startTime">از تاریخ:</label>
+          <label for="keyword">Keyword</label>
+          <input type="text" id="keyword" placeholder="Search...">
+        </div>
+        <div class="input-group">
+          <label for="matchType">Match Type</label>
+          <select id="matchType">
+            <option value="contains">Contains</option>
+            <option value="exact">Exact</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label for="domain">Domain</label>
+          <input type="text" id="domain" placeholder="e.g., google.com">
+        </div>
+        <div class="input-group">
+          <label for="startTime">From Date</label>
           <input type="datetime-local" id="startTime">
         </div>
-
         <div class="input-group">
-          <label for="endTime">تا تاریخ:</label>
+          <label for="endTime">To Date</label>
           <input type="datetime-local" id="endTime">
         </div>
-
         <div class="input-group">
-          <label for="minVisits">حداقل تعداد بازدید:</label>
+          <label for="minVisits">Min. Visits</label>
           <input type="number" id="minVisits" min="0">
         </div>
       </div>
-    </div>
+      <div class="button-group">
+        <button id="searchBtn">Search</button>
+      </div>
+      <div class="delete-buttons-group">
+        <button id="exportCsvBtn">Export CSV</button>
+        <button id="exportJsonBtn">Export JSON</button>
+        <button id="deleteSelectedBtn">Delete Selected</button>
+        <button id="deleteAllBtn">Delete All</button>
+      </div>
+    </aside>
 
-    <div class="button-group">
-      <button id="searchBtn">جستجو</button>
-      <button id="exportCsvBtn">خروجی CSV</button>
-      <button id="exportJsonBtn">خروجی JSON</button>
-    </div>
-
-    <div class="delete-buttons-group">
-      <button id="deleteSelectedBtn">حذف انتخاب شده‌ها</button>
-      <button id="deleteAllBtn">حذف همه موارد</button>
-    </div>
-
-    <div id="stats" class="stats-section" role="region" aria-labelledby="stats-heading">
-        <h3 id="stats-heading" class="visually-hidden">Statistics</h3>
-    </div>
-
-    <div id="chartContainer" class="chart-container" role="region" aria-labelledby="chart-heading">
-        <h3 id="chart-heading" class="visually-hidden">Chart</h3>
-      <div class="chart">
-        <div class="chart-bars">
-          <div class="chart-bar" id="resultsBar">
-            <div class="chart-label">تعداد نتایج</div>
-          </div>
-          <div class="chart-bar" id="visitsBar">
-            <div class="chart-label">تعداد بازدیدها</div>
-          </div>
+    <main class="main-content">
+      <div id="stats" class="stats-section"></div>
+      <div id="chartContainer" class="chart-container">
+        <div class="chart">
+          <div class="chart-bar" id="resultsBar"><div class="chart-label">Results</div></div>
+          <div class="chart-bar" id="visitsBar"><div class="chart-label">Visits</div></div>
         </div>
       </div>
-    </div>
-
-    <div id="results" class="results-section" role="region" aria-labelledby="results-heading">
-        <h3 id="results-heading" class="visually-hidden">Results</h3>
-    </div>
+      <div id="results" class="results-section"></div>
+    </main>
   </div>
   <script src="browser-polyfill.js"></script>
   <script type="module" src="main.js"></script>
