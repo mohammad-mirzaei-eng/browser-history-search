@@ -1,6 +1,23 @@
+/* Font-face definitions */
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('fonts/Vazirmatn-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('fonts/Vazirmatn-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Global Styles & Design System */
 :root {
-  --font-family-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-family-sans: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --background-light: #f7f7f7;
   --background-dark: #121212;
   --surface-light: #ffffff;
@@ -60,9 +77,10 @@ body.dark .app-header {
 
 .sidebar {
   padding: 1.5rem;
-  background-color: var(--surface-light);
+  background-color: #f0f0f0; /* Slightly different background */
   border-right: 1px solid var(--border-color-light);
   overflow-y: auto;
+  transition: background-color 0.3s ease;
 }
 
 body.dark .sidebar {
@@ -174,19 +192,29 @@ button:active {
 }
 
 #exportCsvBtn, #exportJsonBtn, #deleteSelectedBtn, #deleteAllBtn {
-  background-color: var(--surface-light);
-  color: var(--primary-color);
+  background-color: transparent;
+  color: var(--text-color-light);
   border: 1px solid var(--border-color-light);
   display: none; /* Hidden by default */
 }
+#exportCsvBtn:hover, #exportJsonBtn:hover {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
 body.dark #exportCsvBtn, body.dark #exportJsonBtn, body.dark #deleteSelectedBtn, body.dark #deleteAllBtn {
-  background-color: var(--surface-dark);
-  color: var(--primary-color);
+  background-color: transparent;
+  color: var(--text-color-dark);
   border-color: var(--border-color-dark);
 }
 
 #deleteSelectedBtn, #deleteAllBtn {
     color: #ff3b30;
+}
+#deleteSelectedBtn:hover, #deleteAllBtn:hover {
+    background-color: #ff3b30;
+    color: white;
+    border-color: #ff3b30;
 }
 
 .stats-section {
@@ -251,7 +279,13 @@ body.dark .stats-section p {
   padding: 0.75rem;
   background-color: var(--surface-light);
   border-radius: var(--border-radius);
+  border: 1px solid var(--border-color-light);
   box-shadow: var(--shadow);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.result-item:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
 }
 body.dark .result-item {
   background-color: var(--surface-dark);
@@ -275,5 +309,41 @@ body.dark .result-item {
 }
 body.dark .result-item small {
     color: var(--text-color-dark);
+}
+
+/* Loading Indicator */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+body.dark .loading-overlay {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: var(--primary-color);
+  animation: spin 1s ease infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
   

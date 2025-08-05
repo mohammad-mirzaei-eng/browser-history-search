@@ -6,6 +6,9 @@ import { downloadFile } from './utils.js';
 async function searchHistory() {
     if (!elements.resultsDiv || !elements.statsDiv) return;
 
+    const loadingOverlay = document.getElementById('loading-overlay');
+    loadingOverlay.style.display = 'flex';
+
     elements.resultsDiv.innerHTML = '';
     elements.statsDiv.innerHTML = '';
 
@@ -40,6 +43,8 @@ async function searchHistory() {
         console.error('Error searching history:', error);
         const { currentLanguage } = getState();
         elements.resultsDiv.innerHTML = `<p class="error">${translations[currentLanguage].error || 'An error occurred'}</p>`;
+    } finally {
+        loadingOverlay.style.display = 'none';
     }
 }
 
