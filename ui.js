@@ -1,6 +1,5 @@
 import { translations, elements } from './config.js';
 import { getState, setState } from './state.js';
-import { downloadFile } from './utils.js';
 
 function updateLanguageUI(lang) {
     const t = translations[lang];
@@ -23,13 +22,17 @@ function updateLanguageUI(lang) {
     if (elements.exportCsvBtn) elements.exportCsvBtn.textContent = t.exportCsv;
     if (elements.exportJsonBtn) elements.exportJsonBtn.textContent = t.exportJson;
 
-    if (elements.darkModeLabel) elements.darkModeLabel.textContent = t.darkMode;
-
     if (elements.domainInput) elements.domainInput.placeholder = `${t.example}: google.com`;
     if (elements.keywordInput) elements.keywordInput.placeholder = t.search;
 
     if (elements.resultsLabel) elements.resultsLabel.textContent = t.resultsLabel;
     if (elements.visitsLabel) elements.visitsLabel.textContent = t.visitsLabel;
+
+    // Update active language button
+    if (elements.langFaBtn && elements.langEnBtn) {
+        elements.langFaBtn.classList.toggle('active', lang === 'fa');
+        elements.langEnBtn.classList.toggle('active', lang === 'en');
+    }
 
     if (getState().searchResults.length > 0) {
         displayResults();
@@ -68,7 +71,7 @@ export function displayResults() {
         link.href = item.url;
         link.target = '_blank';
         link.textContent = item.title || item.url;
-        link.title = item.url; // Add tooltip with full URL
+        link.title = item.url;
 
         const small = document.createElement('small');
         small.textContent = `${translations[currentLanguage].totalVisits}: ${item.visitCount}`;
@@ -80,7 +83,7 @@ export function displayResults() {
         fragment.appendChild(div);
     });
 
-    elements.resultsDiv.innerHTML = ''; // Clear previous results
+    elements.resultsDiv.innerHTML = '';
     elements.resultsDiv.appendChild(fragment);
 }
 
@@ -100,7 +103,7 @@ export function displayStats() {
 
 function updateChart(total, visits) {
     if (!elements.resultsBar || !elements.visitsBar) return;
-    const maxValue = Math.max(total, visits, 1); // Avoid division by zero
+    const maxValue = Math.max(total, visits, 1);
     const resultsHeight = (total / maxValue) * 100;
     const visitsHeight = (visits / maxValue) * 100;
 
@@ -114,23 +117,19 @@ export function updateLanguage(lang) {
     browser.storage.local.set({ language: lang });
 }
 
+function setDarkMode(isDark) {
+    document.body.classList.toggle('dark', isDark);
+    if (elements.themeIconSun && elements.themeIconMoon) {
+        elements.themeIconSun.style.display = isDark ? 'none' : 'block';
+        elements.themeIconMoon.style.display = isDark ? 'block' : 'none';
+    }
+    browser.storage.local.set({ darkMode: isDark });
+}
+
 export function loadStoredUIPreferences() {
     browser.storage.local.get(['darkMode', 'language']).then(data => {
-        if (data.language) {
-            const radio = document.querySelector(`input[name="language"][value="${data.language}"]`);
-            if (radio) {
-                radio.checked = true;
-                updateLanguage(data.language);
-            }
-        } else {
-            // Default to 'fa' if no language is stored
-            updateLanguage('fa');
-        }
-
-        if (data.darkMode && elements.darkModeToggle) {
-            document.body.classList.add('dark');
-            elements.darkModeToggle.checked = true;
-        }
+        updateLanguage(data.language || 'fa');
+        setDarkMode(data.darkMode || false);
     });
 }
 
@@ -149,24 +148,40 @@ function handleShiftClick(e) {
     }
 }
 
-function toggleDarkMode() {
-    if (elements.darkModeToggle.checked) {
-        document.body.classList.add('dark');
-        browser.storage.local.set({ darkMode: true });
-    } else {
-        document.body.classList.remove('dark');
-        browser.storage.local.set({ darkMode: false });
+function handleTabClick(e) {
+    const tabButton = e.target.closest('.tab-link');
+    if (!tabButton) return;
+
+    elements.tabLinks.forEach(link => link.classList.remove('active'));
+    elements.tabPanes.forEach(pane => pane.classList.remove('active'));
+
+    tabButton.classList.add('active');
+    const tabId = tabButton.dataset.tab;
+    const correspondingPane = document.getElementById(tabId);
+    if (correspondingPane) {
+        correspondingPane.classList.add('active');
     }
 }
 
 export function initializeUI(searchHandler, deleteHandler, deleteAllHandler, exportCsvHandler, exportJsonHandler) {
-    elements.languageRadios.forEach(radio => {
-        radio.addEventListener('change', (e) => {
-            if (e.target.checked) {
-                updateLanguage(e.target.value);
-            }
+    if (elements.langFaBtn) {
+        elements.langFaBtn.addEventListener('click', () => updateLanguage('fa'));
+    }
+    if (elements.langEnBtn) {
+        elements.langEnBtn.addEventListener('click', () => updateLanguage('en'));
+    }
+
+    if (elements.darkModeToggle) {
+        elements.darkModeToggle.addEventListener('click', () => {
+            const isDark = !document.body.classList.contains('dark');
+            setDarkMode(isDark);
         });
-    });
+    }
+
+    const tabNav = document.querySelector('.tab-nav');
+    if (tabNav) {
+        tabNav.addEventListener('click', handleTabClick);
+    }
 
     if (elements.keywordInput) {
         elements.keywordInput.addEventListener('keypress', (e) => {
@@ -178,10 +193,6 @@ export function initializeUI(searchHandler, deleteHandler, deleteAllHandler, exp
 
     if (elements.resultsDiv) {
         elements.resultsDiv.addEventListener('click', handleShiftClick);
-    }
-
-    if (elements.darkModeToggle) {
-        elements.darkModeToggle.addEventListener('change', toggleDarkMode);
     }
 
     if(elements.searchBtn) elements.searchBtn.addEventListener('click', searchHandler);
