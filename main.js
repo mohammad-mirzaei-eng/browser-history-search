@@ -4,20 +4,18 @@ import { initializeUI, displayResults, displayStats, loadStoredUIPreferences } f
 import { downloadFile } from './utils.js';
 
 async function searchHistory() {
-    if (!elements.resultsDiv || !elements.statsDiv) return;
+    if (!elements.resultsDiv || !elements.statsSummary) return;
 
-    const loadingOverlay = document.getElementById('loading-overlay');
-    loadingOverlay.style.display = 'flex';
-
+    elements.loadingOverlay.style.display = 'flex';
     elements.resultsDiv.innerHTML = '';
-    elements.statsDiv.innerHTML = '';
+    elements.statsSummary.innerHTML = '';
 
     const keyword = elements.keywordInput ? elements.keywordInput.value : '';
     const matchType = elements.matchTypeSelect ? elements.matchTypeSelect.value : 'contains';
     const domain = elements.domainInput ? elements.domainInput.value : '';
     const startTime = elements.startTimeInput && elements.startTimeInput.value ? new Date(elements.startTimeInput.value).getTime() : 0;
     const endTime = elements.endTimeInput && elements.endTimeInput.value ? new Date(elements.endTimeInput.value).getTime() : Date.now();
-    const minVisits = elements.minVisitsInput ? parseInt(elements.minVisitsInput.value) : 0;
+    const minVisits = elements.minVisitsInput && elements.minVisitsInput.value ? parseInt(elements.minVisitsInput.value) : 0;
 
     saveFilters();
 
@@ -26,66 +24,66 @@ async function searchHistory() {
             text: keyword,
             startTime: startTime,
             endTime: endTime,
-            maxResults: 1000
+            maxResults: 10000
         });
 
         const filteredResults = historyItems.filter(item => {
             if (domain && !item.url.includes(domain)) return false;
             if (minVisits > 0 && item.visitCount < minVisits) return false;
-            if (matchType === 'exact' && item.title !== keyword && item.url !== keyword) return false;
-            return true;
+
+            const title = item.title || '';
+            const url = item.url || '';
+            const textToSearch = keyword.toLowerCase();
+
+            if (matchType === 'exact') {
+                return title.toLowerCase() === textToSearch || url.toLowerCase() === textToSearch;
+            } else { // contains
+                return title.toLowerCase().includes(textToSearch) || url.toLowerCase().includes(textToSearch);
+            }
         });
 
         setState({ searchResults: filteredResults });
         displayResults();
         displayStats();
+
     } catch (error) {
         console.error('Error searching history:', error);
         const { currentLanguage } = getState();
         elements.resultsDiv.innerHTML = `<p class="error">${translations[currentLanguage].error || 'An error occurred'}</p>`;
     } finally {
-        loadingOverlay.style.display = 'none';
+        elements.loadingOverlay.style.display = 'none';
     }
 }
 
 async function deleteSelected() {
     if (!elements.resultsDiv) return;
 
-    const checkboxes = elements.resultsDiv.querySelectorAll('input[type="checkbox"]:checked');
+    const checkboxes = elements.resultsDiv.querySelectorAll('.result-checkbox:checked');
+    if (checkboxes.length === 0) return;
+
+    elements.loadingOverlay.style.display = 'flex';
+
     const urls = Array.from(checkboxes).map(cb => cb.dataset.url);
 
-    for (const url of urls) {
-        await browser.history.deleteUrl({ url });
+    try {
+        for (const url of urls) {
+            await browser.history.deleteUrl({ url });
+        }
+        // Refresh search to show updated results
+        await searchHistory();
+    } catch(error) {
+        console.error('Error deleting history:', error);
+    } finally {
+        elements.loadingOverlay.style.display = 'none';
     }
-
-    // Refresh search
-    if (elements.searchBtn) elements.searchBtn.click();
-}
-
-async function deleteAll() {
-    const { searchResults } = getState();
-    if (searchResults.length === 0) return;
-
-    const urls = searchResults.map(item => item.url);
-
-    for (const url of urls) {
-        await browser.history.deleteUrl({ url });
-    }
-
-    // Refresh search
-    if (elements.searchBtn) elements.searchBtn.click();
 }
 
 function exportCsv() {
     const { searchResults, currentLanguage } = getState();
     if (searchResults.length === 0) return;
 
-    const headers = [
-        translations[currentLanguage].keyword,
-        'URL',
-        translations[currentLanguage].totalVisits,
-        translations[currentLanguage].endTime
-    ];
+    const t = translations[currentLanguage];
+    const headers = [t.keyword, 'URL', t.totalVisits, t.endTime];
 
     const rows = searchResults.map(item => [
         `"${(item.title || '').replace(/"/g, '""')}"`,
@@ -119,21 +117,25 @@ function saveFilters() {
 }
 
 async function loadFilters() {
-    const data = await browser.storage.local.get('filters');
-    if (data.filters) {
-        if (elements.keywordInput) elements.keywordInput.value = data.filters.keyword || '';
-        if (elements.matchTypeSelect) elements.matchTypeSelect.value = data.filters.matchType || 'contains';
-        if (elements.domainInput) elements.domainInput.value = data.filters.domain || '';
-        if (elements.startTimeInput) elements.startTimeInput.value = data.filters.startTime || '';
-        if (elements.endTimeInput) elements.endTimeInput.value = data.filters.endTime || '';
-        if (elements.minVisitsInput) elements.minVisitsInput.value = data.filters.minVisits || '';
+    try {
+        const data = await browser.storage.local.get('filters');
+        if (data.filters) {
+            if (elements.keywordInput) elements.keywordInput.value = data.filters.keyword || '';
+            if (elements.matchTypeSelect) elements.matchTypeSelect.value = data.filters.matchType || 'contains';
+            if (elements.domainInput) elements.domainInput.value = data.filters.domain || '';
+            if (elements.startTimeInput) elements.startTimeInput.value = data.filters.startTime || '';
+            if (elements.endTimeInput) elements.endTimeInput.value = data.filters.endTime || '';
+            if (elements.minVisitsInput) elements.minVisitsInput.value = data.filters.minVisits || '';
+        }
+    } catch(error) {
+        console.error('Error loading filters:', error);
     }
 }
 
 function init() {
     loadStoredUIPreferences();
     loadFilters();
-    initializeUI(searchHistory, deleteSelected, deleteAll, exportCsv, exportJson);
+    initializeUI(searchHistory, deleteSelected, exportCsv, exportJson);
 }
 
 document.addEventListener('DOMContentLoaded', init);
