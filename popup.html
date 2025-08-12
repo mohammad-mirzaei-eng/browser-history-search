@@ -15,46 +15,18 @@
       <h2>History Search</h2>
       <div class="settings-section">
         <div class="language-switch">
-          <label><input type="radio" name="language" value="fa" checked> فارسی</label>
-          <label><input type="radio" name="language" value="en"> English</label>
+          <button id="lang-fa-btn" class="icon-button active" title="فارسی">FA</button>
+          <button id="lang-en-btn" class="icon-button" title="English">EN</button>
         </div>
-        <div class="dark-mode-toggle">
-          <label><input type="checkbox" id="darkModeToggle"> Dark Mode</label>
-        </div>
+        <button id="darkModeToggle" class="icon-button" title="Toggle Dark Mode">
+          <svg id="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <svg id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
       </div>
     </header>
 
-    <aside class="sidebar">
-      <h3>Filters</h3>
-      <div class="filter-section">
-        <div class="input-group">
-          <label for="keyword">Keyword</label>
-          <input type="text" id="keyword" placeholder="Search...">
-        </div>
-        <div class="input-group">
-          <label for="matchType">Match Type</label>
-          <select id="matchType">
-            <option value="contains">Contains</option>
-            <option value="exact">Exact</option>
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="domain">Domain</label>
-          <input type="text" id="domain" placeholder="e.g., google.com">
-        </div>
-        <div class="input-group">
-          <label for="startTime">From Date</label>
-          <input type="datetime-local" id="startTime">
-        </div>
-        <div class="input-group">
-          <label for="endTime">To Date</label>
-          <input type="datetime-local" id="endTime">
-        </div>
-        <div class="input-group">
-          <label for="minVisits">Min. Visits</label>
-          <input type="number" id="minVisits" min="0">
-        </div>
-      </div>
+    <aside class="action-panel">
+      <h3>Actions</h3>
       <div class="button-group">
         <button id="searchBtn">Search</button>
       </div>
@@ -67,14 +39,59 @@
     </aside>
 
     <main class="main-content">
-      <div id="stats" class="stats-section"></div>
-      <div id="chartContainer" class="chart-container">
-        <div class="chart">
-          <div class="chart-bar" id="resultsBar"><div class="chart-label">Results</div></div>
-          <div class="chart-bar" id="visitsBar"><div class="chart-label">Visits</div></div>
+      <nav class="tab-nav">
+        <button class="tab-link active" data-tab="search-tab-content">Search</button>
+        <button class="tab-link" data-tab="filters-tab-content">Filters</button>
+        <button class="tab-link" data-tab="stats-tab-content">Statistics</button>
+      </nav>
+
+      <div class="tab-content">
+        <div id="search-tab-content" class="tab-pane active">
+          <div id="results" class="results-section"></div>
+        </div>
+
+        <div id="filters-tab-content" class="tab-pane">
+          <div class="filter-section">
+            <div class="input-group">
+              <label for="keyword">Keyword</label>
+              <input type="text" id="keyword" placeholder="Search...">
+            </div>
+            <div class="input-group">
+              <label for="matchType">Match Type</label>
+              <select id="matchType">
+                <option value="contains">Contains</option>
+                <option value="exact">Exact</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="domain">Domain</label>
+              <input type="text" id="domain" placeholder="e.g., google.com">
+            </div>
+            <div class="input-group">
+              <label for="startTime">From Date</label>
+              <input type="datetime-local" id="startTime">
+            </div>
+            <div class="input-group">
+              <label for="endTime">To Date</label>
+              <input type="datetime-local" id="endTime">
+            </div>
+            <div class="input-group">
+              <label for="minVisits">Min. Visits</label>
+              <input type="number" id="minVisits" min="0">
+            </div>
+          </div>
+        </div>
+
+        <div id="stats-tab-content" class="tab-pane">
+          <div id="stats" class="stats-section"></div>
+          <div id="chartContainer" class="chart-container">
+            <div class="chart">
+              <div class="chart-bar" id="resultsBar"><div class="chart-label">Results</div></div>
+              <div class="chart-bar" id="visitsBar"><div class="chart-label">Visits</div></div>
+            </div>
+          </div>
         </div>
       </div>
-      <div id="results" class="results-section"></div>
     </main>
   </div>
   <script src="browser-polyfill.js"></script>
