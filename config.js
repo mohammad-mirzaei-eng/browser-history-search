@@ -64,9 +64,14 @@ export const translations = {
     statsDiv: document.getElementById('stats'),
     resultsBar: document.getElementById('resultsBar'),
     visitsBar: document.getElementById('visitsBar'),
-    languageRadios: document.querySelectorAll('input[name="language"]'),
+    // New selectors for the redesigned UI
+    langFaBtn: document.getElementById('lang-fa-btn'),
+    langEnBtn: document.getElementById('lang-en-btn'),
+    themeIconSun: document.getElementById('theme-icon-sun'),
+    themeIconMoon: document.getElementById('theme-icon-moon'),
+    tabLinks: document.querySelectorAll('.tab-link'),
+    tabPanes: document.querySelectorAll('.tab-pane'),
     heading: document.querySelector('h2'),
-    darkModeLabel: document.querySelector('label[for="darkModeToggle"]'),
     resultsLabel: document.querySelector('#resultsBar .chart-label'),
     visitsLabel: document.querySelector('#visitsBar .chart-label'),
     labels: {

@@ -15,7 +15,7 @@
       <h2>History Search</h2>
       <div class="settings-section">
         <div class="language-switch">
-          <button id="lang-fa-btn" class="icon-button active" title="فارسی">FA</button>
+          <button id="lang-fa-btn" class="icon-button" title="فارسی">FA</button>
           <button id="lang-en-btn" class="icon-button" title="English">EN</button>
         </div>
         <button id="darkModeToggle" class="icon-button" title="Toggle Dark Mode">
@@ -40,17 +40,17 @@
 
     <main class="main-content">
       <nav class="tab-nav">
-        <button class="tab-link active" data-tab="search-tab-content">Search</button>
-        <button class="tab-link" data-tab="filters-tab-content">Filters</button>
-        <button class="tab-link" data-tab="stats-tab-content">Statistics</button>
+        <button class="tab-link active" data-tab="search-tab">Search</button>
+        <button class="tab-link" data-tab="filters-tab">Filters</button>
+        <button class="tab-link" data-tab="stats-tab">Statistics</button>
       </nav>
 
       <div class="tab-content">
-        <div id="search-tab-content" class="tab-pane active">
+        <div id="search-tab" class="tab-pane active">
           <div id="results" class="results-section"></div>
         </div>
 
-        <div id="filters-tab-content" class="tab-pane">
+        <div id="filters-tab" class="tab-pane">
           <div class="filter-section">
             <div class="input-group">
               <label for="keyword">Keyword</label>
@@ -82,7 +82,7 @@
           </div>
         </div>
 
-        <div id="stats-tab-content" class="tab-pane">
+        <div id="stats-tab" class="tab-pane">
           <div id="stats" class="stats-section"></div>
           <div id="chartContainer" class="chart-container">
             <div class="chart">
