@@ -8,6 +8,7 @@ function updateLanguageUI(lang) {
 
     document.title = t.title;
     if (elements.heading) elements.heading.textContent = t.title;
+    if (elements.filtersLabel) elements.filtersLabel.textContent = t.filters;
 
     Object.entries(elements.labels).forEach(([key, element]) => {
         if (element) element.textContent = t[key];
@@ -18,17 +19,13 @@ function updateLanguageUI(lang) {
 
     if (elements.searchBtn) elements.searchBtn.textContent = t.search;
     if (elements.deleteSelectedBtn) elements.deleteSelectedBtn.textContent = t.deleteSelected;
-    if (elements.deleteAllBtn) elements.deleteAllBtn.textContent = t.deleteAll;
     if (elements.exportCsvBtn) elements.exportCsvBtn.textContent = t.exportCsv;
     if (elements.exportJsonBtn) elements.exportJsonBtn.textContent = t.exportJson;
+    if (elements.selectAllLabel) elements.selectAllLabel.textContent = t.selectAll;
 
     if (elements.domainInput) elements.domainInput.placeholder = `${t.example}: google.com`;
     if (elements.keywordInput) elements.keywordInput.placeholder = t.search;
 
-    if (elements.resultsLabel) elements.resultsLabel.textContent = t.resultsLabel;
-    if (elements.visitsLabel) elements.visitsLabel.textContent = t.visitsLabel;
-
-    // Update active language button
     if (elements.langFaBtn && elements.langEnBtn) {
         elements.langFaBtn.classList.toggle('active', lang === 'fa');
         elements.langEnBtn.classList.toggle('active', lang === 'en');
@@ -45,18 +42,14 @@ export function displayResults() {
     if (!elements.resultsDiv) return;
 
     if (searchResults.length === 0) {
-        elements.resultsDiv.innerHTML = `<p>${translations[currentLanguage].noResults}</p>`;
-        if (elements.deleteSelectedBtn) elements.deleteSelectedBtn.style.display = 'none';
-        if (elements.deleteAllBtn) elements.deleteAllBtn.style.display = 'none';
-        if (elements.exportCsvBtn) elements.exportCsvBtn.style.display = 'none';
-        if (elements.exportJsonBtn) elements.exportJsonBtn.style.display = 'none';
+        elements.resultsDiv.innerHTML = `<p class="no-results">${translations[currentLanguage].noResults}</p>`;
+        if (elements.resultsToolbar) elements.resultsToolbar.style.display = 'none';
+        if (elements.statsSummary) elements.statsSummary.style.display = 'none';
         return;
     }
 
-    if (elements.deleteSelectedBtn) elements.deleteSelectedBtn.style.display = 'block';
-    if (elements.deleteAllBtn) elements.deleteAllBtn.style.display = 'block';
-    if (elements.exportCsvBtn) elements.exportCsvBtn.style.display = 'block';
-    if (elements.exportJsonBtn) elements.exportJsonBtn.style.display = 'block';
+    if (elements.resultsToolbar) elements.resultsToolbar.style.display = 'flex';
+    if (elements.statsSummary) elements.statsSummary.style.display = 'flex';
 
     const fragment = document.createDocumentFragment();
     searchResults.forEach(item => {
@@ -66,6 +59,7 @@ export function displayResults() {
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.dataset.url = item.url;
+        checkbox.className = 'result-checkbox';
 
         const link = document.createElement('a');
         link.href = item.url;
@@ -73,42 +67,49 @@ export function displayResults() {
         link.textContent = item.title || item.url;
         link.title = item.url;
 
-        const small = document.createElement('small');
-        small.textContent = `${translations[currentLanguage].totalVisits}: ${item.visitCount}`;
+        const visitInfo = document.createElement('div');
+        visitInfo.className = 'visit-info';
+
+        const visitCount = document.createElement('span');
+        visitCount.className = 'visit-count';
+        visitCount.textContent = `${item.visitCount || 0} ${item.visitCount > 1 ? 'visits' : 'visit'}`;
+
+        const lastVisit = document.createElement('span');
+        lastVisit.className = 'last-visit';
+        lastVisit.textContent = new Date(item.lastVisitTime).toLocaleString(currentLanguage === 'fa' ? 'fa-IR' : 'en-US');
+
+        visitInfo.appendChild(visitCount);
+        visitInfo.appendChild(lastVisit);
 
         div.appendChild(checkbox);
         div.appendChild(link);
-        div.appendChild(small);
+        div.appendChild(visitInfo);
 
         fragment.appendChild(div);
     });
 
     elements.resultsDiv.innerHTML = '';
     elements.resultsDiv.appendChild(fragment);
+    if (elements.selectAllCheckbox) elements.selectAllCheckbox.checked = false;
 }
 
 export function displayStats() {
     const { searchResults, currentLanguage } = getState();
-    if (!elements.statsDiv) return;
+    if (!elements.statsSummary) return;
 
     const total = searchResults.length;
     const totalVisits = searchResults.reduce((sum, item) => sum + (item.visitCount || 0), 0);
 
-    elements.statsDiv.innerHTML = `
-        <p><strong>${translations[currentLanguage].totalResults}:</strong> ${total}</p>
-        <p><strong>${translations[currentLanguage].totalVisits}:</strong> ${totalVisits}</p>
+    elements.statsSummary.innerHTML = `
+        <div class="stat-item">
+            <span class="stat-value">${total}</span>
+            <span class="stat-label">${translations[currentLanguage].totalResults}</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value">${totalVisits}</span>
+            <span class="stat-label">${translations[currentLanguage].totalVisits}</span>
+        </div>
     `;
-    updateChart(total, totalVisits);
-}
-
-function updateChart(total, visits) {
-    if (!elements.resultsBar || !elements.visitsBar) return;
-    const maxValue = Math.max(total, visits, 1);
-    const resultsHeight = (total / maxValue) * 100;
-    const visitsHeight = (visits / maxValue) * 100;
-
-    elements.resultsBar.style.height = `${resultsHeight}%`;
-    elements.visitsBar.style.height = `${visitsHeight}%`;
 }
 
 export function updateLanguage(lang) {
@@ -137,7 +138,7 @@ function handleShiftClick(e) {
     if (e.target.type === 'checkbox') {
         const { lastChecked } = getState();
         if (e.shiftKey && lastChecked) {
-            const checkboxes = Array.from(elements.resultsDiv.querySelectorAll('input[type="checkbox"]'));
+            const checkboxes = Array.from(elements.resultsDiv.querySelectorAll('.result-checkbox'));
             const start = checkboxes.indexOf(lastChecked);
             const end = checkboxes.indexOf(e.target);
             checkboxes.slice(Math.min(start, end), Math.max(start, end) + 1).forEach(cb => {
@@ -148,22 +149,19 @@ function handleShiftClick(e) {
     }
 }
 
-function handleTabClick(e) {
-    const tabButton = e.target.closest('.tab-link');
-    if (!tabButton) return;
-
-    elements.tabLinks.forEach(link => link.classList.remove('active'));
-    elements.tabPanes.forEach(pane => pane.classList.remove('active'));
-
-    tabButton.classList.add('active');
-    const tabId = tabButton.dataset.tab;
-    const correspondingPane = document.getElementById(tabId);
-    if (correspondingPane) {
-        correspondingPane.classList.add('active');
+function toggleFilters() {
+    if(elements.filterControls) {
+        elements.filterControls.classList.toggle('expanded');
+        elements.toggleFiltersBtn.classList.toggle('active');
     }
 }
 
-export function initializeUI(searchHandler, deleteHandler, deleteAllHandler, exportCsvHandler, exportJsonHandler) {
+function selectAll(isChecked) {
+    const checkboxes = elements.resultsDiv.querySelectorAll('.result-checkbox');
+    checkboxes.forEach(cb => cb.checked = isChecked);
+}
+
+export function initializeUI(searchHandler, deleteHandler, exportCsvHandler, exportJsonHandler) {
     if (elements.langFaBtn) {
         elements.langFaBtn.addEventListener('click', () => updateLanguage('fa'));
     }
@@ -178,9 +176,12 @@ export function initializeUI(searchHandler, deleteHandler, deleteAllHandler, exp
         });
     }
 
-    const tabNav = document.querySelector('.tab-nav');
-    if (tabNav) {
-        tabNav.addEventListener('click', handleTabClick);
+    if (elements.toggleFiltersBtn) {
+        elements.toggleFiltersBtn.addEventListener('click', toggleFilters);
+    }
+
+    if (elements.selectAllCheckbox) {
+        elements.selectAllCheckbox.addEventListener('change', (e) => selectAll(e.target.checked));
     }
 
     if (elements.keywordInput) {
@@ -197,7 +198,6 @@ export function initializeUI(searchHandler, deleteHandler, deleteAllHandler, exp
 
     if(elements.searchBtn) elements.searchBtn.addEventListener('click', searchHandler);
     if(elements.deleteSelectedBtn) elements.deleteSelectedBtn.addEventListener('click', deleteHandler);
-    if(elements.deleteAllBtn) elements.deleteAllBtn.addEventListener('click', deleteAllHandler);
     if(elements.exportCsvBtn) elements.exportCsvBtn.addEventListener('click', exportCsvHandler);
     if(elements.exportJsonBtn) elements.exportJsonBtn.addEventListener('click', exportJsonHandler);
 }
