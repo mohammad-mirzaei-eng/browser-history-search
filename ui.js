@@ -1,6 +1,8 @@
-import { translations, elements } from './config.js';
+import { translations, getElements } from './config.js';
 import { getState, setState } from './state.js';
 import { downloadFile } from './utils.js';
+
+let elements = getElements();
 
 function updateLanguageUI(lang) {
     const t = translations[lang];
@@ -10,12 +12,16 @@ function updateLanguageUI(lang) {
     document.title = t.title;
     if (elements.heading) elements.heading.textContent = t.title;
 
-    Object.entries(elements.labels).forEach(([key, element]) => {
-        if (element) element.textContent = t[key];
-    });
+    if (elements.labels) {
+        Object.entries(elements.labels).forEach(([key, element]) => {
+            if (element) element.textContent = t[key];
+        });
+    }
 
-    if (elements.selectOptions.contains) elements.selectOptions.contains.textContent = t.contains;
-    if (elements.selectOptions.exact) elements.selectOptions.exact.textContent = t.exact;
+    if (elements.selectOptions && elements.selectOptions.contains)
+        elements.selectOptions.contains.textContent = t.contains;
+    if (elements.selectOptions && elements.selectOptions.exact)
+        elements.selectOptions.exact.textContent = t.exact;
 
     if (elements.searchBtn) elements.searchBtn.textContent = t.search;
     if (elements.deleteSelectedBtn) elements.deleteSelectedBtn.textContent = t.deleteSelected;
@@ -38,50 +44,25 @@ function updateLanguageUI(lang) {
 }
 
 export function displayResults() {
-    const { searchResults, currentLanguage } = getState();
-    if (!elements.resultsDiv) return;
+    const { searchResults } = getState();
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.innerHTML = '';
 
-    if (searchResults.length === 0) {
-        elements.resultsDiv.innerHTML = `<p>${translations[currentLanguage].noResults}</p>`;
-        if (elements.deleteSelectedBtn) elements.deleteSelectedBtn.style.display = 'none';
-        if (elements.deleteAllBtn) elements.deleteAllBtn.style.display = 'none';
-        if (elements.exportCsvBtn) elements.exportCsvBtn.style.display = 'none';
-        if (elements.exportJsonBtn) elements.exportJsonBtn.style.display = 'none';
+    if (!searchResults || searchResults.length === 0) {
+        resultsDiv.innerHTML = '<p style="text-align:center;">نتیجه‌ای یافت نشد.</p>';
         return;
     }
 
-    if (elements.deleteSelectedBtn) elements.deleteSelectedBtn.style.display = 'block';
-    if (elements.deleteAllBtn) elements.deleteAllBtn.style.display = 'block';
-    if (elements.exportCsvBtn) elements.exportCsvBtn.style.display = 'block';
-    if (elements.exportJsonBtn) elements.exportJsonBtn.style.display = 'block';
-
-    const fragment = document.createDocumentFragment();
     searchResults.forEach(item => {
         const div = document.createElement('div');
         div.className = 'result-item';
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.dataset.url = item.url;
-
-        const link = document.createElement('a');
-        link.href = item.url;
-        link.target = '_blank';
-        link.textContent = item.title || item.url;
-        link.title = item.url; // Add tooltip with full URL
-
-        const small = document.createElement('small');
-        small.textContent = `${translations[currentLanguage].totalVisits}: ${item.visitCount}`;
-
-        div.appendChild(checkbox);
-        div.appendChild(link);
-        div.appendChild(small);
-
-        fragment.appendChild(div);
+        div.innerHTML = `
+            <input type="checkbox" data-url="${item.url}">
+            <a href="${item.url}" target="_blank">${item.title || item.url}</a>
+            <small>${item.visitCount} visits</small>
+        `;
+        resultsDiv.appendChild(div);
     });
-
-    elements.resultsDiv.innerHTML = ''; // Clear previous results
-    elements.resultsDiv.appendChild(fragment);
 }
 
 export function displayStats() {

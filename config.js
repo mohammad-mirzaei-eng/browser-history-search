@@ -47,38 +47,26 @@ export const translations = {
     }
   };
 
-  export const elements = {
-    keywordInput: document.getElementById('keyword'),
-    matchTypeSelect: document.getElementById('matchType'),
-    domainInput: document.getElementById('domain'),
-    startTimeInput: document.getElementById('startTime'),
-    endTimeInput: document.getElementById('endTime'),
-    minVisitsInput: document.getElementById('minVisits'),
-    searchBtn: document.getElementById('searchBtn'),
-    deleteSelectedBtn: document.getElementById('deleteSelectedBtn'),
-    deleteAllBtn: document.getElementById('deleteAllBtn'),
-    exportCsvBtn: document.getElementById('exportCsvBtn'),
-    exportJsonBtn: document.getElementById('exportJsonBtn'),
-    darkModeToggle: document.getElementById('darkModeToggle'),
-    resultsDiv: document.getElementById('results'),
-    statsDiv: document.getElementById('stats'),
-    resultsBar: document.getElementById('resultsBar'),
-    visitsBar: document.getElementById('visitsBar'),
-    languageRadios: document.querySelectorAll('input[name="language"]'),
-    heading: document.querySelector('h2'),
-    darkModeLabel: document.querySelector('label[for="darkModeToggle"]'),
-    resultsLabel: document.querySelector('#resultsBar .chart-label'),
-    visitsLabel: document.querySelector('#visitsBar .chart-label'),
-    labels: {
-        keyword: document.querySelector('label[for="keyword"]'),
-        matchType: document.querySelector('label[for="matchType"]'),
-        domain: document.querySelector('label[for="domain"]'),
-        startTime: document.querySelector('label[for="startTime"]'),
-        endTime: document.querySelector('label[for="endTime"]'),
-        minVisits: document.querySelector('label[for="minVisits"]')
-    },
-    selectOptions: {
-        contains: document.querySelector('#matchType option[value="contains"]'),
-        exact: document.querySelector('#matchType option[value="exact"]')
-    }
-  };
+  export function getElements() {
+    return {
+        searchBtn: document.getElementById('searchBtn'),
+        resultsDiv: document.getElementById('results'),
+        statsDiv: document.getElementById('stats'),
+        keywordInput: document.getElementById('keyword'),
+        matchTypeSelect: document.getElementById('matchType'),
+        domainInput: document.getElementById('domain'),
+        startTimeInput: document.getElementById('startTime'),
+        endTimeInput: document.getElementById('endTime'),
+        minVisitsInput: document.getElementById('minVisits'),
+        deleteSelectedBtn: document.getElementById('deleteSelectedBtn'),
+        deleteAllBtn: document.getElementById('deleteAllBtn'),
+        exportCsvBtn: document.getElementById('exportCsvBtn'),
+        exportJsonBtn: document.getElementById('exportJsonBtn'),
+        darkModeToggle: document.getElementById('darkModeToggle'),
+        darkModeLabel: document.querySelector('.dark-mode-toggle label'),
+        languageRadios: Array.from(document.querySelectorAll('input[name="language"]')),
+        resultsBar: document.getElementById('resultsBar'),
+        visitsBar: document.getElementById('visitsBar'),
+        // سایر عناصر مورد نیاز...
+    };
+}

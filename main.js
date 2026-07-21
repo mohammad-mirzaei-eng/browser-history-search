@@ -1,7 +1,10 @@
-import { elements, translations } from './config.js';
+import { translations } from './config.js';
 import { getState, setState } from './state.js';
 import { initializeUI, displayResults, displayStats, loadStoredUIPreferences } from './ui.js';
 import { downloadFile } from './utils.js';
+import { getElements } from './config.js';
+
+let elements = {};
 
 async function searchHistory() {
     if (!elements.resultsDiv || !elements.statsDiv) return;
@@ -12,37 +15,38 @@ async function searchHistory() {
     elements.resultsDiv.innerHTML = '';
     elements.statsDiv.innerHTML = '';
 
-    const keyword = elements.keywordInput ? elements.keywordInput.value : '';
-    const matchType = elements.matchTypeSelect ? elements.matchTypeSelect.value : 'contains';
-    const domain = elements.domainInput ? elements.domainInput.value : '';
+    const keyword = elements.keywordInput ? elements.keywordInput.value.trim() : '';
     const startTime = elements.startTimeInput && elements.startTimeInput.value ? new Date(elements.startTimeInput.value).getTime() : 0;
     const endTime = elements.endTimeInput && elements.endTimeInput.value ? new Date(elements.endTimeInput.value).getTime() : Date.now();
     const minVisits = elements.minVisitsInput ? parseInt(elements.minVisitsInput.value) : 0;
+    const domain = elements.domainInput ? elements.domainInput.value.trim() : '';
 
     saveFilters();
 
     try {
-        const historyItems = await browser.history.search({
+        // جستجوی تاریخچه مرورگر
+        const results = await browser.history.search({
             text: keyword,
-            startTime: startTime,
-            endTime: endTime,
+            startTime,
+            endTime,
             maxResults: 1000
         });
 
-        const filteredResults = historyItems.filter(item => {
-            if (domain && !item.url.includes(domain)) return false;
-            if (minVisits > 0 && item.visitCount < minVisits) return false;
-            if (matchType === 'exact' && item.title !== keyword && item.url !== keyword) return false;
-            return true;
+        // فیلتر بر اساس دامنه و تعداد بازدید
+        const filtered = results.filter(item => {
+            const domainMatch = domain ? item.url.includes(domain) : true;
+            const visitsMatch = item.visitCount >= minVisits;
+            return domainMatch && visitsMatch;
         });
 
-        setState({ searchResults: filteredResults });
-        displayResults();
-        displayStats();
+        setState({ searchResults: filtered });
+
+        import('./ui.js').then(ui => {
+            ui.displayResults();
+            ui.displayStats();
+        });
     } catch (error) {
-        console.error('Error searching history:', error);
-        const { currentLanguage } = getState();
-        elements.resultsDiv.innerHTML = `<p class="error">${translations[currentLanguage].error || 'An error occurred'}</p>`;
+        elements.resultsDiv.innerHTML = `<p style="color:red;text-align:center;">خطا در جستجو: ${error.message}</p>`;
     } finally {
         loadingOverlay.style.display = 'none';
     }
@@ -131,6 +135,8 @@ async function loadFilters() {
 }
 
 function init() {
+    elements = getElements();
+
     loadStoredUIPreferences();
     loadFilters();
     initializeUI(searchHistory, deleteSelected, deleteAll, exportCsv, exportJson);
