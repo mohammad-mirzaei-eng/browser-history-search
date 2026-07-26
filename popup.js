@@ -20,7 +20,12 @@ const languageRadios = document.querySelectorAll('input[name="language"]');
 // Variables
 let searchResults = [];
 let lastChecked = null;
-let currentLanguage = 'fa';
+let currentLanguage = 'en';
+
+// Detect if running on Android
+function isAndroid() {
+  return /Android/.test(navigator.userAgent);
+}
 
 // Translations
 const translations = {
@@ -45,10 +50,15 @@ const translations = {
     totalVisits: 'تعداد کل بازدیدها',
     resultsLabel: 'تعداد نتایج',
     visitsLabel: 'تعداد بازدیدها',
-    example: 'مثال'
+    example: 'مثال',
+    error: 'خرابی رخ داد',
+    androidError: 'متأسفانه جستجو روی اندروید مقید است. لطفاً از دسکتاپ فایرفاکس استفاده کنید.',
+    apiError: 'خرابی API: ممکن است مجوزهایی لازم باشند',
+    timeoutError: 'جستجو بیش از حد طول کشید. لطفاً فیلترهای کمتری امتحان کنید.',
+    retrying: 'دوباره تلاش...'
   },
   en: {
-    title: 'Chrome History Search',
+    title: 'Browser History Search',
     keyword: 'Keyword',
     matchType: 'Match Type',
     contains: 'Contains',
@@ -68,7 +78,12 @@ const translations = {
     totalVisits: 'Total Visits',
     resultsLabel: 'Results Count',
     visitsLabel: 'Visits Count',
-    example: 'Example'
+    example: 'Example',
+    error: 'An error occurred',
+    androidError: 'History search is limited on Android. Please use Firefox Desktop for full functionality.',
+    apiError: 'API Error: Required permissions may be missing',
+    timeoutError: 'Search took too long. Try with fewer filters.',
+    retrying: 'Retrying...'
   }
 };
 
@@ -155,12 +170,12 @@ languageRadios.forEach(radio => {
 window.addEventListener('DOMContentLoaded', async () => {
   const data = await browser.storage.local.get(['filters', 'darkMode', 'language']);
   
-  if (data.language) {
-    const radio = document.querySelector(`input[name="language"][value="${data.language}"]`);
-    if (radio) {
-      radio.checked = true;
-      updateLanguage(data.language);
-    }
+  // Set language with English as default
+  const lang = data.language || 'en';
+  const radio = document.querySelector(`input[name="language"][value="${lang}"]`);
+  if (radio) {
+    radio.checked = true;
+    updateLanguage(lang);
   }
   
   if (data.filters) {
@@ -176,7 +191,25 @@ window.addEventListener('DOMContentLoaded', async () => {
     document.body.classList.add('dark');
     darkModeToggle.checked = true;
   }
+  
+  // Show Android notice if applicable
+  if (isAndroid()) {
+    showAndroidNotice();
+  }
 });
+
+// Show Android compatibility notice
+function showAndroidNotice() {
+  const notice = document.createElement('div');
+  notice.className = 'android-notice';
+  notice.style.cssText = 'background-color: #fff3cd; border: 1px solid #ffc107; padding: 10px; margin-bottom: 10px; border-radius: 4px; color: #856404; text-align: center;';
+  notice.textContent = translations[currentLanguage].androidError;
+  
+  const container = document.querySelector('.container');
+  if (container) {
+    container.insertBefore(notice, container.firstChild);
+  }
+}
 
 // Handle Enter key press
 if (keywordInput) {
@@ -238,6 +271,12 @@ function updateChart(total, visits) {
   if (!resultsBar || !visitsBar) return;
   
   const maxValue = Math.max(total, visits);
+  if (maxValue === 0) {
+    resultsBar.style.height = '0%';
+    visitsBar.style.height = '0%';
+    return;
+  }
+  
   const resultsHeight = (total / maxValue) * 100;
   const visitsHeight = (visits / maxValue) * 100;
 
@@ -245,7 +284,7 @@ function updateChart(total, visits) {
   visitsBar.style.height = `${visitsHeight}%`;
 }
 
-// Main search function
+// Main search function with timeout and error handling
 if (searchBtn) {
   searchBtn.addEventListener('click', async () => {
     if (!resultsDiv || !statsDiv) return;
@@ -260,15 +299,44 @@ if (searchBtn) {
     const endTime = endTimeInput && endTimeInput.value ? new Date(endTimeInput.value).getTime() : Date.now();
     const minVisits = minVisitsInput ? parseInt(minVisitsInput.value) : 0;
     
+    // Validate inputs
+    if (!keyword.trim()) {
+      resultsDiv.innerHTML = `<p class="error">${translations[currentLanguage].noResults}</p>`;
+      return;
+    }
+    
     saveFilters();
     
+    // Show loading state
+    resultsDiv.innerHTML = `<p>${translations[currentLanguage].retrying}</p>`;
+    
     try {
-      const historyItems = await browser.history.search({
+      // Create a promise that times out after 10 seconds
+      const searchPromise = browser.history.search({
         text: keyword,
         startTime: startTime,
         endTime: endTime,
         maxResults: 1000
       });
+      
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('timeout')), 10000)
+      );
+      
+      let historyItems = [];
+      
+      try {
+        historyItems = await Promise.race([searchPromise, timeoutPromise]);
+      } catch (err) {
+        if (err.message === 'timeout') {
+          throw new Error('timeout');
+        }
+        // On Android or if history API fails, show helpful message
+        if (isAndroid() || err.message.includes('history')) {
+          throw new Error('android');
+        }
+        throw err;
+      }
       
       searchResults = historyItems.filter(item => {
         if (domain && !item.url.includes(domain)) return false;
@@ -281,7 +349,18 @@ if (searchBtn) {
       displayStats();
     } catch (error) {
       console.error('Error searching history:', error);
-      resultsDiv.innerHTML = `<p class="error">${translations[currentLanguage].error || 'An error occurred'}</p>`;
+      
+      let errorMsg = translations[currentLanguage].error;
+      
+      if (error.message === 'timeout') {
+        errorMsg = translations[currentLanguage].timeoutError;
+      } else if (error.message === 'android' || isAndroid()) {
+        errorMsg = translations[currentLanguage].androidError;
+      } else if (error.message.includes('permission') || error.message.includes('Permission')) {
+        errorMsg = translations[currentLanguage].apiError;
+      }
+      
+      resultsDiv.innerHTML = `<p class="error">${errorMsg}</p>`;
     }
   });
 }
@@ -292,7 +371,7 @@ function displayResults() {
   
   if (searchResults.length === 0) {
     resultsDiv.innerHTML = `<p>${translations[currentLanguage].noResults}</p>`;
-    // مخفی کردن دکمه‌های حذف و خروجی
+    // Hide delete and export buttons
     if (deleteSelectedBtn) deleteSelectedBtn.style.display = 'none';
     if (deleteAllBtn) deleteAllBtn.style.display = 'none';
     if (exportCsvBtn) exportCsvBtn.style.display = 'none';
@@ -300,7 +379,7 @@ function displayResults() {
     return;
   }
 
-  // نمایش دکمه‌های حذف و خروجی
+  // Show delete and export buttons
   if (deleteSelectedBtn) deleteSelectedBtn.style.display = 'block';
   if (deleteAllBtn) deleteAllBtn.style.display = 'block';
   if (exportCsvBtn) exportCsvBtn.style.display = 'block';
@@ -320,6 +399,7 @@ function displayResults() {
     link.href = item.url;
     link.target = '_blank';
     link.textContent = item.title || item.url;
+    link.title = item.url;
 
     const small = document.createElement('small');
     small.textContent = `${translations[currentLanguage].totalVisits}: ${item.visitCount}`;
@@ -332,12 +412,6 @@ function displayResults() {
   });
 
   resultsDiv.appendChild(fragment);
-
-  // --- این بخش را اضافه کنید ---
-  // به همه لینک‌های نتایج تول‌تیپ آدرس بده
-  resultsDiv.querySelectorAll('a[href]').forEach(link => {
-    link.title = link.href;
-  });
 }
 
 // Display statistics
@@ -363,12 +437,18 @@ if (deleteSelectedBtn) {
     const checkboxes = resultsDiv.querySelectorAll('input[type="checkbox"]:checked');
     const urls = Array.from(checkboxes).map(cb => cb.dataset.url);
 
-    for (const url of urls) {
-      await browser.history.deleteUrl({ url });
-    }
+    if (urls.length === 0) return;
 
-    // Refresh search
-    if (searchBtn) searchBtn.click();
+    try {
+      for (const url of urls) {
+        await browser.history.deleteUrl({ url });
+      }
+      // Refresh search
+      if (searchBtn) searchBtn.click();
+    } catch (error) {
+      console.error('Error deleting items:', error);
+      resultsDiv.innerHTML = `<p class="error">${translations[currentLanguage].error}</p>`;
+    }
   });
 }
 
@@ -380,12 +460,18 @@ if (deleteAllBtn) {
     const checkboxes = resultsDiv.querySelectorAll('input[type="checkbox"]');
     const urls = Array.from(checkboxes).map(cb => cb.dataset.url);
 
-    for (const url of urls) {
-      await browser.history.deleteUrl({ url });
-    }
+    if (urls.length === 0) return;
 
-    // Refresh search
-    if (searchBtn) searchBtn.click();
+    try {
+      for (const url of urls) {
+        await browser.history.deleteUrl({ url });
+      }
+      // Refresh search
+      if (searchBtn) searchBtn.click();
+    } catch (error) {
+      console.error('Error deleting all items:', error);
+      resultsDiv.innerHTML = `<p class="error">${translations[currentLanguage].error}</p>`;
+    }
   });
 }
 
