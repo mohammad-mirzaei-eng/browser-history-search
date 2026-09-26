@@ -92,6 +92,16 @@ The new user interface is designed to be modern, user-friendly, and fully respon
 
 This extension is built with HTML, CSS, and JavaScript.
 
+### Browser-specific packages
+
+Run `node scripts/build-packages.js` to generate three self-contained extension folders:
+
+- `desktop/chrome`: Chrome desktop popup, sized to 780 x 600 CSS pixels.
+- `desktop/firefox`: Firefox desktop popup, sized to 780 x 600 CSS pixels.
+- `mobile/firefox`: Firefox for Android layout, sized to the available screen and arranged in one column.
+
+Load the desired folder as an unpacked extension in the corresponding browser. Re-run the build script after changing the shared source files. The script updates package files without deleting other files in those folders.
+
 ## Support
 
 For issues or feature requests, please use the Issues section on GitHub.

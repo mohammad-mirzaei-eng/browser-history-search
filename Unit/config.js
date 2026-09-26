@@ -1,6 +1,9 @@
 export const translations = {
     fa: {
+      persian: 'فارسی',
+      english: 'English',
       title: 'جستجوی تاریخچه مرورگر',
+      filters: 'فیلترها',
       keyword: 'کلیدواژه',
       matchType: 'نوع جستجو',
       contains: 'شامل',
@@ -20,10 +23,20 @@ export const translations = {
       totalVisits: 'تعداد کل بازدیدها',
       resultsLabel: 'تعداد نتایج',
       visitsLabel: 'تعداد بازدیدها',
-      example: 'مثال'
+      example: 'مثال',
+      searchPlaceholder: 'جستجو...',
+      domainPlaceholder: 'مثال: google.com',
+      minVisitsPlaceholder: '۱',
+      noResults: 'نتیجه‌ای یافت نشد.',
+      visits: 'بازدید',
+      searchError: 'خطا در جستجو',
+      url: 'نشانی'
     },
     en: {
+      persian: 'Persian',
+      english: 'English',
       title: 'Browser History Search',
+      filters: 'Filters',
       keyword: 'Keyword',
       matchType: 'Match Type',
       contains: 'Contains',
@@ -43,7 +56,14 @@ export const translations = {
       totalVisits: 'Total Visits',
       resultsLabel: 'Results Count',
       visitsLabel: 'Visits Count',
-      example: 'Example'
+      example: 'Example',
+      searchPlaceholder: 'Search...',
+      domainPlaceholder: 'e.g., google.com',
+      minVisitsPlaceholder: '1',
+      noResults: 'No results found.',
+      visits: 'visits',
+      searchError: 'Search error',
+      url: 'URL'
     }
   };
 
@@ -64,6 +84,9 @@ export const translations = {
         exportJsonBtn: document.getElementById('exportJsonBtn'),
         darkModeToggle: document.getElementById('darkModeToggle'),
         darkModeLabel: document.querySelector('.dark-mode-toggle label'),
+        heading: document.querySelector('.app-header h2'),
+        translatableElements: Array.from(document.querySelectorAll('[data-i18n]')),
+        translatableAttributes: Array.from(document.querySelectorAll('[data-i18n-placeholder], [data-i18n-aria-label]')),
         languageRadios: Array.from(document.querySelectorAll('input[name="language"]')),
         resultsBar: document.getElementById('resultsBar'),
         visitsBar: document.getElementById('visitsBar'),

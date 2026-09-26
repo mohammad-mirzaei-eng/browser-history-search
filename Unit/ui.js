@@ -10,36 +10,24 @@ function updateLanguageUI(lang) {
     document.documentElement.dir = lang === 'fa' ? 'rtl' : 'ltr';
 
     document.title = t.title;
-    if (elements.heading) elements.heading.textContent = t.title;
-
-    if (elements.labels) {
-        Object.entries(elements.labels).forEach(([key, element]) => {
-            if (element) element.textContent = t[key];
-        });
-    }
-
-    if (elements.selectOptions && elements.selectOptions.contains)
-        elements.selectOptions.contains.textContent = t.contains;
-    if (elements.selectOptions && elements.selectOptions.exact)
-        elements.selectOptions.exact.textContent = t.exact;
-
-    if (elements.searchBtn) elements.searchBtn.textContent = t.search;
-    if (elements.deleteSelectedBtn) elements.deleteSelectedBtn.textContent = t.deleteSelected;
-    if (elements.deleteAllBtn) elements.deleteAllBtn.textContent = t.deleteAll;
-    if (elements.exportCsvBtn) elements.exportCsvBtn.textContent = t.exportCsv;
-    if (elements.exportJsonBtn) elements.exportJsonBtn.textContent = t.exportJson;
-
-    if (elements.darkModeLabel) elements.darkModeLabel.textContent = t.darkMode;
-
-    if (elements.domainInput) elements.domainInput.placeholder = `${t.example}: google.com`;
-    if (elements.keywordInput) elements.keywordInput.placeholder = t.search;
-
-    if (elements.resultsLabel) elements.resultsLabel.textContent = t.resultsLabel;
-    if (elements.visitsLabel) elements.visitsLabel.textContent = t.visitsLabel;
+    elements.translatableElements.forEach(element => {
+        element.textContent = t[element.dataset.i18n];
+    });
+    elements.translatableAttributes.forEach(element => {
+        if (element.dataset.i18nPlaceholder) {
+            element.placeholder = t[element.dataset.i18nPlaceholder];
+        }
+        if (element.dataset.i18nAriaLabel) {
+            element.setAttribute('aria-label', t[element.dataset.i18nAriaLabel]);
+        }
+    });
 
     if (getState().searchResults.length > 0) {
         displayResults();
         displayStats();
+    } else {
+        const emptyMessage = elements.resultsDiv?.querySelector('.empty-message');
+        if (emptyMessage) emptyMessage.textContent = t.noResults;
     }
 }
 
@@ -49,18 +37,28 @@ export function displayResults() {
     resultsDiv.innerHTML = '';
 
     if (!searchResults || searchResults.length === 0) {
-        resultsDiv.innerHTML = '<p style="text-align:center;">نتیجه‌ای یافت نشد.</p>';
+        const emptyMessage = document.createElement('p');
+        emptyMessage.className = 'empty-message';
+        emptyMessage.textContent = translations[getState().currentLanguage].noResults;
+        resultsDiv.appendChild(emptyMessage);
         return;
     }
 
     searchResults.forEach(item => {
+        const { currentLanguage } = getState();
         const div = document.createElement('div');
         div.className = 'result-item';
-        div.innerHTML = `
-            <input type="checkbox" data-url="${item.url}">
-            <a href="${item.url}" target="_blank">${item.title || item.url}</a>
-            <small>${item.visitCount} visits</small>
-        `;
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.dataset.url = item.url;
+        const link = document.createElement('a');
+        link.href = item.url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = item.title || item.url;
+        const visitCount = document.createElement('small');
+        visitCount.textContent = `${item.visitCount} ${translations[currentLanguage].visits}`;
+        div.append(checkbox, link, visitCount);
         resultsDiv.appendChild(div);
     });
 }

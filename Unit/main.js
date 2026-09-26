@@ -18,7 +18,8 @@ async function searchHistory() {
     const keyword = elements.keywordInput ? elements.keywordInput.value.trim() : '';
     const startTime = elements.startTimeInput && elements.startTimeInput.value ? new Date(elements.startTimeInput.value).getTime() : 0;
     const endTime = elements.endTimeInput && elements.endTimeInput.value ? new Date(elements.endTimeInput.value).getTime() : Date.now();
-    const minVisits = elements.minVisitsInput ? parseInt(elements.minVisitsInput.value) : 0;
+    const minVisitsValue = elements.minVisitsInput ? Number.parseInt(elements.minVisitsInput.value, 10) : 0;
+    const minVisits = Number.isNaN(minVisitsValue) ? 0 : minVisitsValue;
     const domain = elements.domainInput ? elements.domainInput.value.trim() : '';
 
     saveFilters();
@@ -46,7 +47,10 @@ async function searchHistory() {
             ui.displayStats();
         });
     } catch (error) {
-        elements.resultsDiv.innerHTML = `<p style="color:red;text-align:center;">خطا در جستجو: ${error.message}</p>`;
+        const errorMessage = document.createElement('p');
+        errorMessage.className = 'error-message';
+        errorMessage.textContent = `${translations[getState().currentLanguage].searchError}: ${error.message}`;
+        elements.resultsDiv.appendChild(errorMessage);
     } finally {
         loadingOverlay.style.display = 'none';
     }
@@ -86,7 +90,7 @@ function exportCsv() {
 
     const headers = [
         translations[currentLanguage].keyword,
-        'URL',
+        translations[currentLanguage].url,
         translations[currentLanguage].totalVisits,
         translations[currentLanguage].endTime
     ];
