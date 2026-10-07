@@ -40,7 +40,7 @@ async function searchHistory() {
             return domainMatch && visitsMatch;
         });
 
-        setState({ searchResults: filtered });
+        setState({ searchResults: filtered, currentPage: 1 });
 
         import('./ui.js').then(ui => {
             ui.displayResults();

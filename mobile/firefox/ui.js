@@ -32,11 +32,12 @@ function updateLanguageUI(lang) {
 }
 
 export function displayResults() {
-    const { searchResults } = getState();
+    const { searchResults, currentPage, resultsPerPage } = getState();
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = '';
 
     if (!searchResults || searchResults.length === 0) {
+        elements.pagination.hidden = true;
         const emptyMessage = document.createElement('p');
         emptyMessage.className = 'empty-message';
         emptyMessage.textContent = translations[getState().currentLanguage].noResults;
@@ -44,7 +45,10 @@ export function displayResults() {
         return;
     }
 
-    searchResults.forEach(item => {
+    const startIndex = (currentPage - 1) * resultsPerPage;
+    const pageResults = searchResults.slice(startIndex, startIndex + resultsPerPage);
+
+    pageResults.forEach(item => {
         const { currentLanguage } = getState();
         const div = document.createElement('div');
         div.className = 'result-item';
@@ -61,6 +65,21 @@ export function displayResults() {
         div.append(checkbox, link, visitCount);
         resultsDiv.appendChild(div);
     });
+
+    displayPagination();
+}
+
+function displayPagination() {
+    const { searchResults, currentPage, resultsPerPage, currentLanguage } = getState();
+    const totalPages = Math.ceil(searchResults.length / resultsPerPage);
+    const t = translations[currentLanguage];
+
+    elements.pagination.hidden = false;
+    elements.pageIndicator.textContent = t.pageIndicator
+        .replace('{current}', currentPage)
+        .replace('{total}', totalPages);
+    elements.previousPageBtn.disabled = currentPage === 1;
+    elements.nextPageBtn.disabled = currentPage === totalPages;
 }
 
 export function displayStats() {
@@ -158,6 +177,27 @@ export function initializeUI(searchHandler, deleteHandler, deleteAllHandler, exp
     if (elements.resultsDiv) {
         elements.resultsDiv.addEventListener('click', handleShiftClick);
     }
+
+    elements.previousPageBtn.addEventListener('click', () => {
+        const { currentPage } = getState();
+        if (currentPage > 1) {
+            setState({ currentPage: currentPage - 1 });
+            displayResults();
+        }
+    });
+
+    elements.nextPageBtn.addEventListener('click', () => {
+        const { currentPage, searchResults, resultsPerPage } = getState();
+        if (currentPage < Math.ceil(searchResults.length / resultsPerPage)) {
+            setState({ currentPage: currentPage + 1 });
+            displayResults();
+        }
+    });
+
+    elements.resultsPerPageSelect.addEventListener('change', event => {
+        setState({ resultsPerPage: Number.parseInt(event.target.value, 10), currentPage: 1 });
+        displayResults();
+    });
 
     if (elements.darkModeToggle) {
         elements.darkModeToggle.addEventListener('change', toggleDarkMode);

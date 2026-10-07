@@ -1,7 +1,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const projectRoot = path.resolve(__dirname, '..');
+const sourceRoot = path.resolve(__dirname, '..');
+const projectRoot = path.resolve(sourceRoot, '..');
 const packageFiles = [
   'browser-polyfill.js',
   'chart.min.js',
@@ -107,19 +108,19 @@ body, .browser-window, .app-container {
   }
 ];
 
-const baseStyles = fs.readFileSync(path.join(projectRoot, 'styles.css'), 'utf8');
-const baseManifest = JSON.parse(fs.readFileSync(path.join(projectRoot, 'manifest.json'), 'utf8'));
+const baseStyles = fs.readFileSync(path.join(sourceRoot, 'styles.css'), 'utf8');
+const baseManifest = JSON.parse(fs.readFileSync(path.join(sourceRoot, 'manifest.json'), 'utf8'));
 
 for (const profile of profiles) {
   const packageRoot = path.join(projectRoot, profile.output);
   fs.mkdirSync(packageRoot, { recursive: true });
 
   for (const file of packageFiles) {
-    fs.copyFileSync(path.join(projectRoot, file), path.join(packageRoot, file));
+    fs.copyFileSync(path.join(sourceRoot, file), path.join(packageRoot, file));
   }
 
   for (const directory of ['fonts', 'icons']) {
-    fs.cpSync(path.join(projectRoot, directory), path.join(packageRoot, directory), { recursive: true });
+    fs.cpSync(path.join(sourceRoot, directory), path.join(packageRoot, directory), { recursive: true });
   }
 
   fs.writeFileSync(path.join(packageRoot, 'styles.css'), `${baseStyles}\n${profile.css}`);

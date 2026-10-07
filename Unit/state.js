@@ -1,5 +1,7 @@
 let state = {
   searchResults: [],
+  currentPage: 1,
+  resultsPerPage: 20,
   lastChecked: null,
   currentLanguage: 'fa',
 };

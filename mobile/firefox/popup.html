@@ -77,6 +77,20 @@
           </div>
         </div>
         <div id="results" class="results-section"></div>
+        <nav id="pagination" class="pagination" aria-label="Pagination" hidden>
+          <label for="resultsPerPage" data-i18n="resultsPerPage"></label>
+          <select id="resultsPerPage">
+            <option value="10">10</option>
+            <option value="20" selected>20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+          <div class="pagination-navigation">
+            <button id="previousPageBtn" type="button" data-i18n="previousPage"></button>
+            <span id="pageIndicator" aria-live="polite"></span>
+            <button id="nextPageBtn" type="button" data-i18n="nextPage"></button>
+          </div>
+        </nav>
       </main>
     </div>
   </div>
