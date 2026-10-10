@@ -4,7 +4,7 @@ A powerful browser extension for advanced history search with comprehensive feat
 
 ## Demo
 
-<img width="781" height="599" alt="image" src="https://github.com/user-attachments/assets/c77945af-350f-431a-9672-d99fd9f556f9" />
+<img width="781" height="599" alt="image" src="https://github-production-user-asset-6210df.s3.amazonaws.com/7163310/670302880-c77945af-350f-431a-9672-d99fd9f556f9.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20261010%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20261010T074253Z&X-Amz-Expires=300&X-Amz-Signature=9a8ce387ac388ac5a0f73f7eedb106d6ae727c7b5d1bc21cd2caad09ab530064&X-Amz-SignedHeaders=host&response-content-type=image%2Fpng" />
 
 
 The new user interface is designed to be modern, user-friendly, and fully responsive. It adapts gracefully to any screen size, from a small mobile phone to a large desktop monitor, ensuring a seamless experience on any device. The design features a clean aesthetic, an improved dark mode, and enhanced accessibility.
@@ -122,7 +122,7 @@ This project is licensed under the MIT License.
 ## دمو
 
 
-<img width="781" height="599" alt="image" src="https://github.com/user-attachments/assets/c77945af-350f-431a-9672-d99fd9f556f9" />
+<img width="781" height="599" alt="image" src="https://github-production-user-asset-6210df.s3.amazonaws.com/7163310/670302880-c77945af-350f-431a-9672-d99fd9f556f9.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20261010%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20261010T074253Z&X-Amz-Expires=300&X-Amz-Signature=9a8ce387ac388ac5a0f73f7eedb106d6ae727c7b5d1bc21cd2caad09ab530064&X-Amz-SignedHeaders=host&response-content-type=image%2Fpng" />
 
 رابط کاربری جدید به گونه‌ای طراحی شده است که مدرن، کاربرپسند و کاملاً واکنش‌گرا باشد. این طرح به زیبایی با هر اندازه صفحه‌نمایش، از یک تلفن همراه کوچک تا یک مانیتور دسکتاپ بزرگ، سازگار می‌شود و تجربه‌ای یکپارچه را در هر دستگاهی تضمین می‌کند. این طراحی دارای زیبایی‌شناسی تمیز، حالت تاریک بهبود یافته و دسترسی‌پذیری پیشرفته است.
 
