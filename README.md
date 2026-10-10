@@ -4,7 +4,8 @@ A powerful browser extension for advanced history search with comprehensive feat
 
 ## Demo
 
-*(placeholder for a GIF or screenshot of the new UI)*
+<img width="781" height="599" alt="image" src="https://github.com/user-attachments/assets/c77945af-350f-431a-9672-d99fd9f556f9" />
+
 
 The new user interface is designed to be modern, user-friendly, and fully responsive. It adapts gracefully to any screen size, from a small mobile phone to a large desktop monitor, ensuring a seamless experience on any device. The design features a clean aesthetic, an improved dark mode, and enhanced accessibility.
 
@@ -120,7 +121,8 @@ This project is licensed under the MIT License.
 
 ## دمو
 
-*(جای خالی برای گیف یا اسکرین‌شات از رابط کاربری جدید)*
+
+<img width="781" height="599" alt="image" src="https://github.com/user-attachments/assets/c77945af-350f-431a-9672-d99fd9f556f9" />
 
 رابط کاربری جدید به گونه‌ای طراحی شده است که مدرن، کاربرپسند و کاملاً واکنش‌گرا باشد. این طرح به زیبایی با هر اندازه صفحه‌نمایش، از یک تلفن همراه کوچک تا یک مانیتور دسکتاپ بزرگ، سازگار می‌شود و تجربه‌ای یکپارچه را در هر دستگاهی تضمین می‌کند. این طراحی دارای زیبایی‌شناسی تمیز، حالت تاریک بهبود یافته و دسترسی‌پذیری پیشرفته است.
 
