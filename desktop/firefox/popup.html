@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title></title>
+  <link rel="stylesheet" href="flatpickr.min.css">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -46,11 +47,11 @@
           </div>
           <div class="input-group">
             <label for="startTime" data-i18n="startTime"></label>
-            <input type="datetime-local" id="startTime">
+            <input type="text" id="startTime" placeholder="YYYY-MM-DD HH:mm:ss">
           </div>
           <div class="input-group">
             <label for="endTime" data-i18n="endTime"></label>
-            <input type="datetime-local" id="endTime">
+            <input type="text" id="endTime" placeholder="YYYY-MM-DD HH:mm:ss">
           </div>
           <div class="input-group">
             <label for="minVisits" data-i18n="minVisits"></label>
@@ -94,7 +95,8 @@
       </main>
     </div>
   </div>
-  <script src="browser-polyfill.js"></script>
-  <script type="module" src="main.js"></script>
+<script src="flatpickr.min.js"></script>
+<script src="browser-polyfill.js"></script>
+<script type="module" src="main.js"></script>
 </body>
 </html>

@@ -145,5 +145,16 @@ function init() {
     loadFilters();
     initializeUI(searchHistory, deleteSelected, deleteAll, exportCsv, exportJson);
 }
+const flatpickrConfig = {
+  enableTime: true,
+  enableSeconds: true,
+  time_24hr: true,
+  dateFormat: "Y-m-d\\TH:i:S", // حفظ فرمت استاندارد قبلی برای جلوگیری از دستکاری توابع سرچ
+  allowInput: true
+};
 
+if (window.flatpickr) {
+  flatpickr("#startTime", flatpickrConfig);
+  flatpickr("#endTime", flatpickrConfig);
+}
 document.addEventListener('DOMContentLoaded', init);
